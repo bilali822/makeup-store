@@ -1,0 +1,85 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}{{ category.name }} | SB — By Sabah{% endblock %}
+
+{% block content %}
+
+<!-- ═══════ Hero الفئة ═══════ -->
+<section class="category-hero">
+    <div class="container">
+        <nav class="breadcrumb">
+            <a href="/">الرئيسية</a>
+            <span>/</span>
+            <span>{{ category.name }}</span>
+        </nav>
+        <h1 class="category-hero-title">{{ category.name }}</h1>
+        <p class="category-hero-count">
+            {{ products|length }} منتج متوفر
+        </p>
+    </div>
+</section>
+
+<!-- ═══════ التنقل بين الفئات ═══════ -->
+<section class="category-nav-section">
+    <div class="container">
+        <div class="category-nav">
+            <a href="/" class="category-chip {% if not category %}active{% endif %}">
+                <i class="fas fa-th-large"></i> الكل
+            </a>
+            {% for cat in categories %}
+                <a href="{% url 'category_detail' cat.slug %}" 
+                   class="category-chip {% if cat.slug == category.slug %}active{% endif %}">
+                    <i class="fas {{ cat.icon }}"></i> {{ cat.name }}
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- ═══════ المنتجات ═══════ -->
+<section class="products-section">
+    <div class="container">
+        {% if products %}
+        <div class="products-grid">
+            {% for product in products %}
+            <div class="product-card">
+                <a href="{% url 'product_detail' product.id %}" class="product-image-link">
+                    <div class="product-image">
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.title }}">
+                        {% else %}
+                            <div class="product-placeholder">
+                                <i class="fas fa-spray-can-sparkles"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                </a>
+                <div class="product-info">
+                    <h3><a href="{% url 'product_detail' product.id %}">{{ product.title }}</a></h3>
+                    <p class="product-description">{{ product.description|truncatewords:10 }}</p>
+                    <div class="product-footer">
+                        <span class="product-price">${{ product.price }}</span>
+                        <a href="https://wa.me/96179022180?text=مرحباً، بدي أطلب {{ product.title }}" 
+                           target="_blank" 
+                           class="btn-whatsapp-small">
+                            <i class="fab fa-whatsapp"></i> اطلبي
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-box-open"></i>
+            <p>ما في منتجات في هالفئة حالياً</p>
+            <a href="/" class="btn-primary" style="margin-top: 24px;">
+                <i class="fas fa-arrow-right"></i> رجوع للرئيسية
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+{% endblock %}

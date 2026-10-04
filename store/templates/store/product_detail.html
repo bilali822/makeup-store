@@ -1,0 +1,65 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}{{ product.title }} | SB — By Sabah{% endblock %}
+
+{% block content %}
+
+<section class="product-detail-section">
+    <div class="container">
+        
+        <nav class="breadcrumb">
+            <a href="/">الرئيسية</a>
+            <span>/</span>
+            <a href="/#products">{{ product.category.name }}</a>
+            <span>/</span>
+            <span>{{ product.title }}</span>
+        </nav>
+
+        <div class="product-detail">
+            
+            <div class="product-detail-image">
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.title }}">
+                {% else %}
+                    <div class="product-placeholder large">
+                        <i class="fas fa-spray-can-sparkles"></i>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="product-detail-info">
+                <span class="product-category-tag">{{ product.category.name }}</span>
+                <h1>{{ product.title }}</h1>
+                
+                <div class="product-price-large">${{ product.price }}</div>
+                
+                <p class="product-detail-description">{{ product.description }}</p>
+                
+                <div class="product-meta">
+                    <div class="meta-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>متوفر بكمية محدودة</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-truck"></i>
+                        <span>توصيل لكل لبنان</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-heart"></i>
+                        <span>جودة مضمونة</span>
+                    </div>
+                </div>
+
+                <a href="https://wa.me/96179022180?text=مرحباً، بدي أطلب {{ product.title }} بسعر ${{ product.price }}" 
+                   target="_blank" 
+                   class="btn-whatsapp-large">
+                    <i class="fab fa-whatsapp"></i> اطلبي عبر واتساب
+                </a>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+{% endblock %}

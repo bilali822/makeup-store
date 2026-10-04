@@ -1,0 +1,114 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}SB — By Sabah | الرئيسية{% endblock %}
+
+{% block content %}
+
+<!-- ═══════ Hero Section ═══════ -->
+<section class="hero">
+    <div class="container hero-inner">
+        <div class="hero-text">
+            <span class="hero-tag">مجموعة جديدة</span>
+            <h1>جمالك يبدأ<br>من التفاصيل</h1>
+            <p>معطرات شعر، مكياج، وعطور مختارة بعناية لتضيف لمسة ساحرة لكل يوم.</p>
+            <a href="#categories" class="btn-primary">
+                تسوّقي الآن <i class="fas fa-arrow-left"></i>
+            </a>
+        </div>
+        <div class="hero-image">
+            <img src="{% static 'store/images/logo.png' %}" alt="SB By Sabah">
+        </div>
+    </div>
+</section>
+
+<!-- ═══════ الفئات ═══════ -->
+{% if categories %}
+<section class="categories-section" id="categories">
+    <div class="container">
+        <div class="section-header">
+            <h2>تصفّحي مجموعاتنا الفاخرة</h2>
+            <p>لكل مزاج… عبير يناسبه</p>
+        </div>
+        
+        <div class="categories-grid">
+            <a href="#products" class="category-card">
+                <div class="category-card-icon">
+                    <i class="fas fa-th-large"></i>
+                </div>
+                <h3>كل المنتجات</h3>
+                <p>{{ products|length }} منتج</p>
+            </a>
+            
+            {% for cat in categories %}
+            <a href="{% url 'category_detail' cat.slug %}" class="category-card">
+                <div class="category-card-icon">
+                    <i class="fas {{ cat.icon }}"></i>
+                </div>
+                <h3>{{ cat.name }}</h3>
+                <p>{{ cat.product_set.count }} منتج</p>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- ═══════ المنتجات ═══════ -->
+<section class="products-section" id="products">
+    <div class="container">
+        <div class="section-header">
+            <h2>كل المنتجات</h2>
+            <p>اختاري ما يناسب ذوقك</p>
+        </div>
+        
+        {% if products %}
+        <div class="products-grid">
+            {% for product in products %}
+            <div class="product-card">
+                <a href="{% url 'product_detail' product.id %}" class="product-image-link">
+                    <div class="product-image">
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.title }}">
+                        {% else %}
+                            <div class="product-placeholder">
+                                <i class="fas fa-spray-can-sparkles"></i>
+                            </div>
+                        {% endif %}
+                        <span class="product-category">{{ product.category.name }}</span>
+                    </div>
+                </a>
+                <div class="product-info">
+                    <h3><a href="{% url 'product_detail' product.id %}">{{ product.title }}</a></h3>
+                    <p class="product-description">{{ product.description|truncatewords:10 }}</p>
+                    <div class="product-footer">
+                        <span class="product-price">${{ product.price }}</span>
+                        <a href="https://wa.me/96179022180?text=مرحباً، بدي أطلب {{ product.title }}" target="_blank" class="btn-whatsapp-small">
+                            <i class="fab fa-whatsapp"></i> اطلبي
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-box-open"></i>
+            <p>ما في منتجات حالياً</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- ═══════ CTA ═══════ -->
+<section class="cta-section">
+    <div class="container">
+        <h2>عندك سؤال؟</h2>
+        <p>تواصلي معنا مباشرة عبر واتساب</p>
+        <a href="https://wa.me/96179022180" target="_blank" class="btn-primary">
+            <i class="fab fa-whatsapp"></i> راسلينا
+        </a>
+    </div>
+</section>
+
+{% endblock %}
