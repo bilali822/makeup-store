@@ -1,0 +1,1002 @@
+[
+{
+  "model": "store.category",
+  "pk": 1,
+  "fields": {
+    "name": "Hair Mist | معطر شعر",
+    "slug": "hair-mist",
+    "icon": "fa-spray-can-sparkles"
+  }
+},
+{
+  "model": "store.category",
+  "pk": 2,
+  "fields": {
+    "name": "Lotion | لوشن مرطّب",
+    "slug": "lotion",
+    "icon": "fa-pump-soap"
+  }
+},
+{
+  "model": "store.category",
+  "pk": 3,
+  "fields": {
+    "name": "Scrub | مقشّر ناعم",
+    "slug": "scrub",
+    "icon": "fa-seedling"
+  }
+},
+{
+  "model": "store.category",
+  "pk": 4,
+  "fields": {
+    "name": "Body Butter | كريم الجسم الفاخر",
+    "slug": "body-butter",
+    "icon": "fa-spa"
+  }
+},
+{
+  "model": "store.category",
+  "pk": 5,
+  "fields": {
+    "name": "Body Splash | رشاش الجسم المنعش",
+    "slug": "body-splash",
+    "icon": "fa-shower"
+  }
+},
+{
+  "model": "store.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1500000$EQXyqXZPJU5gOevxiCLE1E$bDmJYYJgNaJPCEiwawxDYLNKqEHoHSCsYnF6E1FbkcY=",
+    "last_login": "2026-10-04T10:47:51.952Z",
+    "is_superuser": true,
+    "username": "sabah",
+    "first_name": "",
+    "last_name": "",
+    "email": "SabahBrand2027@gmail.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-10-04T10:39:01.139Z",
+    "is_seller": false,
+    "phone": "",
+    "address": "",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "store.product",
+  "pk": 14,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 1,
+    "title": "Cheese Cake — Hair Mist",
+    "description": "دفء الحلاوة في كل لمسة… رائحة كيك الجبن الكريمية تلفّك بعبير ناعم يبقى معك طول اليوم — معطر شعر برائحة Cheese Cake",
+    "price": "7.00",
+    "image": "",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:17.674Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 15,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 5,
+    "title": "Cheese Cake — Body Splash",
+    "description": "دفء الحلاوة في كل لمسة… رائحة كيك الجبن الكريمية تلفّك بعبير ناعم يبقى معك طول اليوم — رشاش جسم برائحة Cheese Cake",
+    "price": "7.00",
+    "image": "products/IMG-20261004-WA8769.jpg",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:17.684Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 16,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 4,
+    "title": "Cheese Cake — Body Butter",
+    "description": "دفء الحلاوة في كل لمسة… رائحة كيك الجبن الكريمية تلفّك بعبير ناعم يبقى معك طول اليوم — كريم جسم برائحة Cheese Cake",
+    "price": "8.00",
+    "image": "",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:17.693Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 17,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 3,
+    "title": "Cheese Cake — Scrub",
+    "description": "دفء الحلاوة في كل لمسة… رائحة كيك الجبن الكريمية تلفّك بعبير ناعم يبقى معك طول اليوم — مقشّر جسم برائحة Cheese Cake",
+    "price": "8.00",
+    "image": "products/IMG-20261004-WA8823.jpg",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:17.702Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 18,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 2,
+    "title": "Cheese Cake — Lotion",
+    "description": "دفء الحلاوة في كل لمسة… رائحة كيك الجبن الكريمية تلفّك بعبير ناعم يبقى معك طول اليوم — لوشن جسم برائحة Cheese Cake",
+    "price": "8.00",
+    "image": "products/IMG-20261004-WA6393.jpg",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:17.710Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 19,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 1,
+    "title": "Rose Vanille — Hair Mist",
+    "description": "عناق بين بتلات الورد ونعومة الفانيليا… عبير أنثوي راقٍ يهمس بلمسة فرنسية ساحرة — معطر شعر برائحة Rose Vanille",
+    "price": "7.00",
+    "image": "",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:17.717Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 20,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 5,
+    "title": "Rose Vanille — Body Splash",
+    "description": "عناق بين بتلات الورد ونعومة الفانيليا… عبير أنثوي راقٍ يهمس بلمسة فرنسية ساحرة — رشاش جسم برائحة Rose Vanille",
+    "price": "7.00",
+    "image": "products/IMG-20261004-WA5274.jpg",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:17.724Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 21,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 4,
+    "title": "Rose Vanille — Body Butter",
+    "description": "عناق بين بتلات الورد ونعومة الفانيليا… عبير أنثوي راقٍ يهمس بلمسة فرنسية ساحرة — كريم جسم برائحة Rose Vanille",
+    "price": "8.00",
+    "image": "",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:17.734Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 22,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 3,
+    "title": "Rose Vanille — Scrub",
+    "description": "عناق بين بتلات الورد ونعومة الفانيليا… عبير أنثوي راقٍ يهمس بلمسة فرنسية ساحرة — مقشّر جسم برائحة Rose Vanille",
+    "price": "8.00",
+    "image": "products/IMG-20261004-WA6663.jpg",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:17.743Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 23,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 2,
+    "title": "Rose Vanille — Lotion",
+    "description": "عناق بين بتلات الورد ونعومة الفانيليا… عبير أنثوي راقٍ يهمس بلمسة فرنسية ساحرة — لوشن جسم برائحة Rose Vanille",
+    "price": "8.00",
+    "image": "",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:17.751Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 24,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 1,
+    "title": "Coco Vanille — Hair Mist",
+    "description": "نعومة جوز الهند مع دفء الفانيليا… مزيج استوائي يمنحك عبيراً حلوياً يدوم طويلاً — معطر شعر برائحة Coco Vanille",
+    "price": "7.00",
+    "image": "",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:17.759Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 25,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 5,
+    "title": "Coco Vanille — Body Splash",
+    "description": "نعومة جوز الهند مع دفء الفانيليا… مزيج استوائي يمنحك عبيراً حلوياً يدوم طويلاً — رشاش جسم برائحة Coco Vanille",
+    "price": "7.00",
+    "image": "products/IMG-20261004-WA2817.jpg",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:17.766Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 26,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 4,
+    "title": "Coco Vanille — Body Butter",
+    "description": "نعومة جوز الهند مع دفء الفانيليا… مزيج استوائي يمنحك عبيراً حلوياً يدوم طويلاً — كريم جسم برائحة Coco Vanille",
+    "price": "8.00",
+    "image": "",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:17.773Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 27,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 3,
+    "title": "Coco Vanille — Scrub",
+    "description": "نعومة جوز الهند مع دفء الفانيليا… مزيج استوائي يمنحك عبيراً حلوياً يدوم طويلاً — مقشّر جسم برائحة Coco Vanille",
+    "price": "8.00",
+    "image": "products/IMG-20261004-WA9622.jpg",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:17.781Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 28,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 2,
+    "title": "Coco Vanille — Lotion",
+    "description": "نعومة جوز الهند مع دفء الفانيليا… مزيج استوائي يمنحك عبيراً حلوياً يدوم طويلاً — لوشن جسم برائحة Coco Vanille",
+    "price": "8.00",
+    "image": "products/IMG-20261004-WA6747.jpg",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:17.788Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 29,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 1,
+    "title": "Libre — Hair Mist",
+    "description": "حرية مُعطّرة بلمسة زهرية منعشة… لمن تبحث عن إحساس بالانطلاق والأنوثة في آنٍ واحد — معطر شعر برائحة Libre",
+    "price": "7.00",
+    "image": "",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:17.795Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 30,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 5,
+    "title": "Libre — Body Splash",
+    "description": "حرية مُعطّرة بلمسة زهرية منعشة… لمن تبحث عن إحساس بالانطلاق والأنوثة في آنٍ واحد — رشاش جسم برائحة Libre",
+    "price": "7.00",
+    "image": "products/IMG-20261004-WA7298.jpg",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:17.818Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 31,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 4,
+    "title": "Libre — Body Butter",
+    "description": "حرية مُعطّرة بلمسة زهرية منعشة… لمن تبحث عن إحساس بالانطلاق والأنوثة في آنٍ واحد — كريم جسم برائحة Libre",
+    "price": "8.00",
+    "image": "",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:17.825Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 32,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 3,
+    "title": "Libre — Scrub",
+    "description": "حرية مُعطّرة بلمسة زهرية منعشة… لمن تبحث عن إحساس بالانطلاق والأنوثة في آنٍ واحد — مقشّر جسم برائحة Libre",
+    "price": "8.00",
+    "image": "products/IMG-20261004-WA6677.jpg",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:17.833Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 33,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 2,
+    "title": "Libre — Lotion",
+    "description": "حرية مُعطّرة بلمسة زهرية منعشة… لمن تبحث عن إحساس بالانطلاق والأنوثة في آنٍ واحد — لوشن جسم برائحة Libre",
+    "price": "8.00",
+    "image": "products/IMG-20261004-WA3029.jpg",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:17.841Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 34,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 1,
+    "title": "Musk Al Tahara — Hair Mist",
+    "description": "نقاء المسك الأصيل… عبير طاهر يمنحك رائحة هادئة تلامس القلب وتبقى في الذاكرة — معطر شعر برائحة Musk Al Tahara",
+    "price": "7.00",
+    "image": "",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:17.848Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 35,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 5,
+    "title": "Musk Al Tahara — Body Splash",
+    "description": "نقاء المسك الأصيل… عبير طاهر يمنحك رائحة هادئة تلامس القلب وتبقى في الذاكرة — رشاش جسم برائحة Musk Al Tahara",
+    "price": "7.00",
+    "image": "products/IMG-20261004-WA4305.jpg",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:17.855Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 36,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 4,
+    "title": "Musk Al Tahara — Body Butter",
+    "description": "نقاء المسك الأصيل… عبير طاهر يمنحك رائحة هادئة تلامس القلب وتبقى في الذاكرة — كريم جسم برائحة Musk Al Tahara",
+    "price": "8.00",
+    "image": "",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:17.864Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 37,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 3,
+    "title": "Musk Al Tahara — Scrub",
+    "description": "نقاء المسك الأصيل… عبير طاهر يمنحك رائحة هادئة تلامس القلب وتبقى في الذاكرة — مقشّر جسم برائحة Musk Al Tahara",
+    "price": "8.00",
+    "image": "products/IMG-20261004-WA8988.jpg",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:17.872Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 38,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 2,
+    "title": "Musk Al Tahara — Lotion",
+    "description": "نقاء المسك الأصيل… عبير طاهر يمنحك رائحة هادئة تلامس القلب وتبقى في الذاكرة — لوشن جسم برائحة Musk Al Tahara",
+    "price": "8.00",
+    "image": "products/IMG-20261004-WA5572.jpg",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:17.879Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 39,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 1,
+    "title": "Raspberry Icecream — Hair Mist",
+    "description": "برودة الآيس كريم مع حلاوة التوت… عبير منعش وحلو يمنحك لمسة صيفية لا تُقاوم — معطر شعر برائحة Raspberry Icecream",
+    "price": "7.00",
+    "image": "",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:17.887Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 40,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 5,
+    "title": "Raspberry Icecream — Body Splash",
+    "description": "برودة الآيس كريم مع حلاوة التوت… عبير منعش وحلو يمنحك لمسة صيفية لا تُقاوم — رشاش جسم برائحة Raspberry Icecream",
+    "price": "7.00",
+    "image": "products/IMG-20261004-WA9888.jpg",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:17.894Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 41,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 4,
+    "title": "Raspberry Icecream — Body Butter",
+    "description": "برودة الآيس كريم مع حلاوة التوت… عبير منعش وحلو يمنحك لمسة صيفية لا تُقاوم — كريم جسم برائحة Raspberry Icecream",
+    "price": "8.00",
+    "image": "",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:17.902Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 42,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 3,
+    "title": "Raspberry Icecream — Scrub",
+    "description": "برودة الآيس كريم مع حلاوة التوت… عبير منعش وحلو يمنحك لمسة صيفية لا تُقاوم — مقشّر جسم برائحة Raspberry Icecream",
+    "price": "8.00",
+    "image": "products/IMG-20261004-WA7363.jpg",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:17.910Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 43,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 2,
+    "title": "Raspberry Icecream — Lotion",
+    "description": "برودة الآيس كريم مع حلاوة التوت… عبير منعش وحلو يمنحك لمسة صيفية لا تُقاوم — لوشن جسم برائحة Raspberry Icecream",
+    "price": "8.00",
+    "image": "products/IMG-20261004-WA2168.jpg",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:17.917Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 44,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 1,
+    "title": "Peach Papaya — Hair Mist",
+    "description": "عصارة الخوخ وال papaya الاستوائية… عبير فاكهي منعش يملأك حيوية ونضارة — معطر شعر برائحة Peach Papaya",
+    "price": "7.00",
+    "image": "",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:17.924Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 45,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 5,
+    "title": "Peach Papaya — Body Splash",
+    "description": "عصارة الخوخ وال papaya الاستوائية… عبير فاكهي منعش يملأك حيوية ونضارة — رشاش جسم برائحة Peach Papaya",
+    "price": "7.00",
+    "image": "products/IMG-20261004-WA2200.jpg",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:17.934Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 46,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 4,
+    "title": "Peach Papaya — Body Butter",
+    "description": "عصارة الخوخ وال papaya الاستوائية… عبير فاكهي منعش يملأك حيوية ونضارة — كريم جسم برائحة Peach Papaya",
+    "price": "8.00",
+    "image": "",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:17.941Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 47,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 3,
+    "title": "Peach Papaya — Scrub",
+    "description": "عصارة الخوخ وال papaya الاستوائية… عبير فاكهي منعش يملأك حيوية ونضارة — مقشّر جسم برائحة Peach Papaya",
+    "price": "8.00",
+    "image": "products/IMG-20261004-WA4408.jpg",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:17.947Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 48,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 2,
+    "title": "Peach Papaya — Lotion",
+    "description": "عصارة الخوخ وال papaya الاستوائية… عبير فاكهي منعش يملأك حيوية ونضارة — لوشن جسم برائحة Peach Papaya",
+    "price": "8.00",
+    "image": "products/IMG-20261004-WA9975.jpg",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:17.954Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 49,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 1,
+    "title": "Strawberry Crush — Hair Mist",
+    "description": "انفجار الفراولة الطازجة… عبير فاكهي حلو ومرح يمنحك لمسة أنثوية جذابة — معطر شعر برائحة Strawberry Crush",
+    "price": "7.00",
+    "image": "",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:17.962Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 50,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 5,
+    "title": "Strawberry Crush — Body Splash",
+    "description": "انفجار الفراولة الطازجة… عبير فاكهي حلو ومرح يمنحك لمسة أنثوية جذابة — رشاش جسم برائحة Strawberry Crush",
+    "price": "7.00",
+    "image": "products/IMG-20261004-WA4692.jpg",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:17.968Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 51,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 4,
+    "title": "Strawberry Crush — Body Butter",
+    "description": "انفجار الفراولة الطازجة… عبير فاكهي حلو ومرح يمنحك لمسة أنثوية جذابة — كريم جسم برائحة Strawberry Crush",
+    "price": "8.00",
+    "image": "",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:17.975Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 52,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 3,
+    "title": "Strawberry Crush — Scrub",
+    "description": "انفجار الفراولة الطازجة… عبير فاكهي حلو ومرح يمنحك لمسة أنثوية جذابة — مقشّر جسم برائحة Strawberry Crush",
+    "price": "8.00",
+    "image": "products/IMG-20261004-WA1548.jpg",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:17.982Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 53,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 2,
+    "title": "Strawberry Crush — Lotion",
+    "description": "انفجار الفراولة الطازجة… عبير فاكهي حلو ومرح يمنحك لمسة أنثوية جذابة — لوشن جسم برائحة Strawberry Crush",
+    "price": "8.00",
+    "image": "products/IMG-20261004-WA1114.jpg",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:17.989Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 54,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 1,
+    "title": "Cotton Skin — Hair Mist",
+    "description": "نعومة القطن النقي… عبير ناعم وهادئ يلامسك بإحساس الدفء والنظافة — معطر شعر برائحة Cotton Skin",
+    "price": "7.00",
+    "image": "",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:17.996Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 55,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 5,
+    "title": "Cotton Skin — Body Splash",
+    "description": "نعومة القطن النقي… عبير ناعم وهادئ يلامسك بإحساس الدفء والنظافة — رشاش جسم برائحة Cotton Skin",
+    "price": "7.00",
+    "image": "products/IMG-20261004-WA2429.jpg",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:18.003Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 56,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 4,
+    "title": "Cotton Skin — Body Butter",
+    "description": "نعومة القطن النقي… عبير ناعم وهادئ يلامسك بإحساس الدفء والنظافة — كريم جسم برائحة Cotton Skin",
+    "price": "8.00",
+    "image": "",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:18.010Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 57,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 3,
+    "title": "Cotton Skin — Scrub",
+    "description": "نعومة القطن النقي… عبير ناعم وهادئ يلامسك بإحساس الدفء والنظافة — مقشّر جسم برائحة Cotton Skin",
+    "price": "8.00",
+    "image": "products/IMG-20261004-WA1981.jpg",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:18.017Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 58,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 2,
+    "title": "Cotton Skin — Lotion",
+    "description": "نعومة القطن النقي… عبير ناعم وهادئ يلامسك بإحساس الدفء والنظافة — لوشن جسم برائحة Cotton Skin",
+    "price": "8.00",
+    "image": "products/IMG-20261004-WA4189.jpg",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:18.025Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 59,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 1,
+    "title": "Seduction — Hair Mist",
+    "description": "عبير مغرٍ وجذاب… رائحة دافئة تترك أثراً لا يُنسى وتمنحك ثقة لا تُقاوم — معطر شعر برائحة Seduction",
+    "price": "7.00",
+    "image": "",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:18.033Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 60,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 5,
+    "title": "Seduction — Body Splash",
+    "description": "عبير مغرٍ وجذاب… رائحة دافئة تترك أثراً لا يُنسى وتمنحك ثقة لا تُقاوم — رشاش جسم برائحة Seduction",
+    "price": "7.00",
+    "image": "products/IMG-20261004-WA0179.jpg",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:18.040Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 61,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 4,
+    "title": "Seduction — Body Butter",
+    "description": "عبير مغرٍ وجذاب… رائحة دافئة تترك أثراً لا يُنسى وتمنحك ثقة لا تُقاوم — كريم جسم برائحة Seduction",
+    "price": "8.00",
+    "image": "",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:18.048Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 62,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 3,
+    "title": "Seduction — Scrub",
+    "description": "عبير مغرٍ وجذاب… رائحة دافئة تترك أثراً لا يُنسى وتمنحك ثقة لا تُقاوم — مقشّر جسم برائحة Seduction",
+    "price": "8.00",
+    "image": "products/IMG-20261004-WA4140.jpg",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:18.056Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 63,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 2,
+    "title": "Seduction — Lotion",
+    "description": "عبير مغرٍ وجذاب… رائحة دافئة تترك أثراً لا يُنسى وتمنحك ثقة لا تُقاوم — لوشن جسم برائحة Seduction",
+    "price": "8.00",
+    "image": "products/IMG-20261004-WA8445.jpg",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:18.063Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 64,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 1,
+    "title": "Marshmallow — Hair Mist",
+    "description": "حلاوة المارشميلو الطرية… عبير مرح وحلو يلفّك بإحساس بالدفء والطفولة الجميلة — معطر شعر برائحة Marshmallow",
+    "price": "7.00",
+    "image": "products/image_15_BWPaAqL.jpg",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:18.075Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 65,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 5,
+    "title": "Marshmallow — Body Splash",
+    "description": "حلاوة المارشميلو الطرية… عبير مرح وحلو يلفّك بإحساس بالدفء والطفولة الجميلة — رشاش جسم برائحة Marshmallow",
+    "price": "7.00",
+    "image": "products/IMG-20261004-WA8066.jpg",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:18.082Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 66,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 4,
+    "title": "Marshmallow — Body Butter",
+    "description": "حلاوة المارشميلو الطرية… عبير مرح وحلو يلفّك بإحساس بالدفء والطفولة الجميلة — كريم جسم برائحة Marshmallow",
+    "price": "8.00",
+    "image": "",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:18.089Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 67,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 3,
+    "title": "Marshmallow — Scrub",
+    "description": "حلاوة المارشميلو الطرية… عبير مرح وحلو يلفّك بإحساس بالدفء والطفولة الجميلة — مقشّر جسم برائحة Marshmallow",
+    "price": "8.00",
+    "image": "products/IMG-20261004-WA5241.jpg",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:18.096Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 68,
+  "fields": {
+    "owner": [
+      "sabah"
+    ],
+    "category": 2,
+    "title": "Marshmallow — Lotion",
+    "description": "حلاوة المارشميلو الطرية… عبير مرح وحلو يلفّك بإحساس بالدفء والطفولة الجميلة — لوشن جسم برائحة Marshmallow",
+    "price": "8.00",
+    "image": "products/IMG-20261004-WA3281.jpg",
+    "stock": 1,
+    "is_active": true,
+    "created_at": "2026-10-04T12:02:18.103Z"
+  }
+}
+]
