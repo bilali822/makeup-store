@@ -7,24 +7,21 @@ pip install -r requirements.txt
 python manage.py collectstatic --noinput
 python manage.py migrate --noinput
 
-# تحميل الـ fixtures إذا ما في منتجات
 python manage.py shell << 'PYEOF'
 import os
-from store.models import Product, User
+from store.models import Product, Category, User
 from django.core.management import call_command
 
-# تحميل الـ fixtures
-if Product.objects.count() == 0:
-    print("▶ لا يوجد منتجات — تحميل الـ fixture...")
-    try:
-        call_command('loaddata', 'store/fixtures/initial_data.json', verbosity=2)
-        print("✅ تم تحميل الـ fixture")
-    except Exception as e:
-        print(f"⚠️ فشل التحميل: {e}")
-else:
-    print(f"✓ يوجد {Product.objects.count()} منتج — تخطي")
+# دائماً نعيد تحميل الـ fixture لتحديث المسارات والصور
+print(f"▶ قبل التحديث: {Product.objects.count()} منتج")
+Product.objects.all().delete()
+Category.objects.all().delete()
+print("   ✓ تم حذف البيانات القديمة")
 
-# إنشاء superuser
+call_command('loaddata', 'store/fixtures/initial_data.json', verbosity=2)
+print(f"✅ بعد التحديث: {Product.objects.count()} منتج")
+
+# superuser
 username = os.environ.get('DJANGO_SUPERUSER_USERNAME')
 password = os.environ.get('DJANGO_SUPERUSER_PASSWORD')
 email = os.environ.get('DJANGO_SUPERUSER_EMAIL', '')
