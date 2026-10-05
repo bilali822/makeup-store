@@ -4,36 +4,36 @@ set -o errexit
 pip install --upgrade pip
 pip install -r requirements.txt
 
-# ═══ تنظيف migrations قديمة + جداول معطوبة ═══
+# ═══ تنظيف شامل: حذف السجلات + الجداول القديمة ═══
 python manage.py shell << 'PYEOF'
 from django.db import connection
 try:
     with connection.cursor() as cursor:
-        # 1. حذف تسجيل migration القديم
+        # حذف كل سجلات migrations الفواتير القديمة
         cursor.execute(
-            "DELETE FROM django_migrations WHERE app='store' AND name=%s",
-            ['0004_customer_invoice']
+            "DELETE FROM django_migrations WHERE app='store' AND name LIKE %s",
+            ['0004_%']
         )
-        deleted = cursor.rowcount
-        if deleted:
-            print(f"✅ حذف migration قديم من السجل ({deleted} صف)")
-        else:
-            print("✓ لا يوجد migration قديم")
+        print(f"✅ حذف {cursor.rowcount} سجل migration قديم")
 
-        # 2. حذف الجداول القديمة إذا موجودة
+        # حذف الجداول
         for table in ['store_invoiceitem', 'store_invoice']:
             cursor.execute(f"DROP TABLE IF EXISTS {table} CASCADE")
-            print(f"✅ DROP TABLE IF EXISTS {table}")
+            print(f"✅ DROP {table}")
+
+    connection.commit()
 except Exception as e:
-    print(f"⚠️ تخطي التنظيف: {e}")
+    print(f"⚠️ خطأ في التنظيف: {e}")
+    import traceback
+    traceback.print_exc()
 PYEOF
 
 python manage.py collectstatic --noinput
-python manage.py migrate --noinput
+python manage.py migrate --noinput --verbosity 2
 
 python manage.py shell << 'PYEOF'
 import os
-from store.models import Product, User
+from store.models import Product, User, Invoice
 from django.core.management import call_command
 
 if Product.objects.count() == 0:
@@ -45,6 +45,8 @@ if Product.objects.count() == 0:
         print(f"⚠️ فشل: {e}")
 else:
     print(f"✓ يوجد {Product.objects.count()} منتج — تخطي")
+
+print(f"✓ جدول Invoice جاهز — {Invoice.objects.count()} فاتورة")
 
 username = os.environ.get('DJANGO_SUPERUSER_USERNAME')
 password = os.environ.get('DJANGO_SUPERUSER_PASSWORD')
