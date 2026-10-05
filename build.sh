@@ -9,29 +9,35 @@ python manage.py migrate --noinput
 
 python manage.py shell << 'PYEOF'
 import os
-from store.models import Product, Category, User
+from store.models import Product, User
 from django.core.management import call_command
 
-# دائماً نعيد تحميل الـ fixture لتحديث المسارات والصور
-print(f"▶ قبل التحديث: {Product.objects.count()} منتج")
-Product.objects.all().delete()
-Category.objects.all().delete()
-print("   ✓ تم حذف البيانات القديمة")
+# تحميل الـ fixture فقط إذا ما في منتجات (أول مرة فقط)
+if Product.objects.count() == 0:
+    print("▶ لا يوجد منتجات — تحميل الـ fixture (أول مرة)...")
+    try:
+        call_command('loaddata', 'store/fixtures/initial_data.json', verbosity=2)
+        print(f"✅ تم تحميل {Product.objects.count()} منتج")
+    except Exception as e:
+        print(f"⚠️ فشل تحميل الـ fixture: {e}")
+else:
+    print(f"✓ يوجد {Product.objects.count()} منتج — تخطي (الحفاظ على البيانات)")
 
-call_command('loaddata', 'store/fixtures/initial_data.json', verbosity=2)
-print(f"✅ بعد التحديث: {Product.objects.count()} منتج")
-
-# superuser
+# superuser — إنشاء/تحديث من env vars
 username = os.environ.get('DJANGO_SUPERUSER_USERNAME')
 password = os.environ.get('DJANGO_SUPERUSER_PASSWORD')
 email = os.environ.get('DJANGO_SUPERUSER_EMAIL', '')
 
 if username and password:
-    if not User.objects.filter(username=username).exists():
-        User.objects.create_superuser(username=username, email=email, password=password)
-        print(f"✅ تم إنشاء superuser: {username}")
-    else:
-        print(f"✓ superuser موجود: {username}")
+    user, created = User.objects.get_or_create(
+        username=username,
+        defaults={'email': email, 'is_staff': True, 'is_superuser': True}
+    )
+    user.set_password(password)
+    user.is_staff = True
+    user.is_superuser = True
+    user.save()
+    print(f"✅ Superuser {'created' if created else 'updated'}: {username}")
 else:
-    print("⚠️ لا توجد credentials للـ superuser — تخطي")
+    print("⚠️ لا توجد credentials للـ superuser")
 PYEOF
