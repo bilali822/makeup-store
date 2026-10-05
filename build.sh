@@ -12,7 +12,6 @@ import os
 from store.models import Product, User
 from django.core.management import call_command
 
-# تحميل الـ fixture فقط إذا ما في منتجات (أول مرة فقط)
 if Product.objects.count() == 0:
     print("▶ لا يوجد منتجات — تحميل الـ fixture (أول مرة)...")
     try:
@@ -23,7 +22,6 @@ if Product.objects.count() == 0:
 else:
     print(f"✓ يوجد {Product.objects.count()} منتج — تخطي (الحفاظ على البيانات)")
 
-# superuser — إنشاء/تحديث من env vars
 username = os.environ.get('DJANGO_SUPERUSER_USERNAME')
 password = os.environ.get('DJANGO_SUPERUSER_PASSWORD')
 email = os.environ.get('DJANGO_SUPERUSER_EMAIL', '')
