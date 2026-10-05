@@ -235,7 +235,6 @@ JAZZMIN_UI_TWEAKS = {
     "sidebar_nav_legacy_style": True,
     "sidebar_nav_flat_style": False,
     "theme": "default",
-    "dark_mode_theme": None,
     "button_classes": {
         "primary": "btn-primary",
         "secondary": "btn-secondary",
@@ -243,5 +242,37 @@ JAZZMIN_UI_TWEAKS = {
         "warning": "btn-warning",
         "danger": "btn-danger",
         "success": "btn-success",
+    },
+}
+
+
+# ═══════════════════════════════════════════
+# LOGGING (لتشخيص الأخطاء)
+# ═══════════════════════════════════════════
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '[{levelname}] {asctime} {module}: {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+    'loggers': {
+        'django.request': {
+            'handlers': ['console'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
     },
 }
