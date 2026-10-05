@@ -1,0 +1,13 @@
+name: Keep Render Alive
+on:
+  schedule:
+    # كل 14 دقيقة (لتجنب حد 15 دقيقة للسبات)
+    - cron: '*/14 * * * *'
+  workflow_dispatch:  # يسمح لك تشغيله يدوياً
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Render URL
+        run: curl -I https://makeup-store-gsr5.onrender.com
