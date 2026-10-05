@@ -170,9 +170,9 @@ JAZZMIN_SETTINGS = {
     "site_title": "SB by Sabah",
     "site_header": "SB by Sabah",
     "site_brand": "SB by Sabah",
-    "site_logo": "store/images/logo.png",
-    "login_logo": "store/images/logo.png",
-    "site_logo_classes": "img-circle",
+    # "site_logo": "store/images/logo.png",  # disabled for now
+    # "login_logo": "store/images/logo.png",  # disabled for now
+    # "site_logo_classes": "img-circle",
     "welcome_sign": "✨ مرحباً بك في لوحة تحكم المتجر",
     "copyright": "SB by Sabah © 2026",
     "search_model": ["store.Product", "store.Order", "store.User"],
@@ -209,11 +209,8 @@ JAZZMIN_SETTINGS = {
     "custom_js": None,
     "use_google_fonts_cdn": True,
     "show_ui_builder": True,
-    "changeform_format": "horizontal_tabs",
-    "changeform_format_overrides": {
-        "auth.user": "collapsible",
-        "auth.group": "vertical_tabs",
-    },
+    "changeform_format": "single",
+    # "changeform_format_overrides": {},
     "language_chooser": False,
 }
 
