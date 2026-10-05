@@ -44,7 +44,10 @@ if RENDER_EXTERNAL_HOSTNAME:
 # APPLICATIONS
 # ═══════════════════════════════════════════
 INSTALLED_APPS = [
-    "jazzmin",
+    "unfold",
+    "unfold.contrib.filters",
+    "unfold.contrib.forms",
+    "unfold.contrib.inlines",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -70,7 +73,7 @@ ROOT_URLCONF = "config.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "store" / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -163,87 +166,8 @@ if not DEBUG:
 IMGBB_API_KEY = os.environ.get('IMGBB_API_KEY', '')
 
 
-# ═══════════════════════════════════════════
-# JAZZMIN — لوحة تحكم احترافية
-# ═══════════════════════════════════════════
-JAZZMIN_SETTINGS = {
-    "site_title": "SB by Sabah",
-    "site_header": "SB by Sabah",
-    "site_brand": "SB by Sabah",
-    # "site_logo": "store/images/logo.png",  # disabled for now
-    # "login_logo": "store/images/logo.png",  # disabled for now
-    # "site_logo_classes": "img-circle",
-    "welcome_sign": "✨ مرحباً بك في لوحة تحكم المتجر",
-    "copyright": "SB by Sabah © 2026",
-    "search_model": ["store.Product", "store.Order", "store.User"],
-    "user_avatar": None,
-    "topmenu_links": [
-        {"name": "🏠 الرئيسية", "url": "admin:index", "permissions": ["auth.view_user"]},
-        {"name": "🌐 عرض الموقع", "url": "/", "new_window": True},
-        {"model": "store.Product"},
-        {"model": "store.Order"},
-    ],
-    "usermenu_links": [
-        {"name": "🌐 عرض الموقع", "url": "/", "new_window": True},
-    ],
-    "show_sidebar": True,
-    "navigation_expanded": True,
-    "hide_apps": [],
-    "hide_models": [],
-    "order_with_respect_to": ["store", "auth"],
-    "custom_links": {},
-    "icons": {
-        "auth": "fas fa-users-cog",
-        "auth.user": "fas fa-user",
-        "auth.Group": "fas fa-users",
-        "store": "fas fa-store",
-        "store.Product": "fas fa-spray-can-sparkles",
-        "store.Category": "fas fa-tags",
-        "store.Order": "fas fa-shopping-bag",
-        "store.User": "fas fa-user-circle",
-    },
-    "default_icon_parents": "fas fa-chevron-circle-right",
-    "default_icon_children": "fas fa-circle",
-    "related_modal_active": True,
-    "custom_css": None,
-    "custom_js": None,
-    "use_google_fonts_cdn": True,
-    "show_ui_builder": True,
-    "changeform_format": "single",
-    # "changeform_format_overrides": {},
-    "language_chooser": False,
-}
 
-JAZZMIN_UI_TWEAKS = {
-    "navbar_small_text": False,
-    "footer_small_text": False,
-    "body_small_text": False,
-    "brand_small_text": False,
-    "brand_colour": "navbar-pink",
-    "accent": "accent-pink",
-    "navbar": "navbar-pink navbar-dark",
-    "no_navbar_border": True,
-    "navbar_fixed": True,
-    "layout_boxed": False,
-    "footer_fixed": False,
-    "sidebar_fixed": True,
-    "sidebar": "sidebar-dark-pink",
-    "sidebar_nav_small_text": False,
-    "sidebar_disable_expand": False,
-    "sidebar_nav_child_indent": True,
-    "sidebar_nav_compact_style": False,
-    "sidebar_nav_legacy_style": True,
-    "sidebar_nav_flat_style": False,
-    "theme": "default",
-    "button_classes": {
-        "primary": "btn-primary",
-        "secondary": "btn-secondary",
-        "info": "btn-info",
-        "warning": "btn-warning",
-        "danger": "btn-danger",
-        "success": "btn-success",
-    },
-}
+
 
 
 # ═══════════════════════════════════════════
@@ -274,5 +198,105 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': False,
         },
+    },
+}
+
+# ═══════════════════════════════════════════
+# UNFOLD — لوحة تحكم عصرية
+# ═══════════════════════════════════════════
+from django.urls import reverse_lazy
+
+UNFOLD = {
+    "SITE_TITLE": "SB by Sabah — لوحة التحكم",
+    "SITE_HEADER": "SB by Sabah",
+    "SITE_URL": "/",
+    "SITE_SYMBOL": "spa",
+    "SHOW_HISTORY": True,
+    "SHOW_VIEW_ON_SITE": True,
+    "SHOW_BACK_BUTTON": True,
+    "DASHBOARD_CALLBACK": "store.admin.dashboard_callback",
+    "THEME": "light",
+    "LOGIN": {
+        "image": None,
+        "redirect_after": None,
+    },
+    "STYLES": [],
+    "SCRIPTS": [],
+    "COLORS": {
+        "primary": {
+            "50": "250 245 250",
+            "100": "252 231 243",
+            "200": "251 207 232",
+            "300": "249 168 212",
+            "400": "244 114 182",
+            "500": "236 72 153",
+            "600": "219 39 119",
+            "700": "190 24 93",
+            "800": "157 23 77",
+            "900": "131 24 67",
+            "950": "80 7 36",
+        },
+    },
+    "EXTENSIONS": {
+        "modeltranslation": {
+            "flags": {
+                "en": "🇬🇧",
+                "ar": "🇱🇧",
+            },
+        },
+    },
+    "SIDEBAR": {
+        "show_search": True,
+        "show_all_applications": False,
+        "navigation": [
+            {
+                "title": "الرئيسية",
+                "separator": False,
+                "items": [
+                    {
+                        "title": "لوحة التحكم",
+                        "icon": "dashboard",
+                        "link": reverse_lazy("admin:index"),
+                    },
+                ],
+            },
+            {
+                "title": "المتجر",
+                "separator": True,
+                "items": [
+                    {
+                        "title": "المنتجات",
+                        "icon": "spa",
+                        "link": reverse_lazy("admin:store_product_changelist"),
+                    },
+                    {
+                        "title": "الفئات",
+                        "icon": "category",
+                        "link": reverse_lazy("admin:store_category_changelist"),
+                    },
+                    {
+                        "title": "الطلبات",
+                        "icon": "shopping_bag",
+                        "link": reverse_lazy("admin:store_order_changelist"),
+                    },
+                ],
+            },
+            {
+                "title": "المستخدمون",
+                "separator": True,
+                "items": [
+                    {
+                        "title": "المستخدمون",
+                        "icon": "people",
+                        "link": reverse_lazy("admin:store_user_changelist"),
+                    },
+                    {
+                        "title": "المجموعات",
+                        "icon": "group",
+                        "link": reverse_lazy("admin:auth_group_changelist"),
+                    },
+                ],
+            },
+        ],
     },
 }

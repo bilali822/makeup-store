@@ -1,0 +1,124 @@
+{% extends "admin/index.html" %}
+{% load i18n %}
+
+{% block content %}
+<div id="content-main">
+    {% if kpi %}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        {% for item in kpi %}
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-5 border border-gray-200 dark:border-gray-700 hover:shadow-md transition">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-sm text-gray-500 dark:text-gray-400">{{ item.title }}</span>
+                <span class="text-2xl">{{ item.icon|default:"" }}</span>
+            </div>
+            <div class="text-3xl font-bold text-gray-900 dark:text-white mb-1">{{ item.metric }}</div>
+            <div class="text-xs text-gray-400">{{ item.footer }}</div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+            <div class="px-5 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+                <h2 class="text-base font-bold text-gray-900 dark:text-white">🛍️ آخر الطلبات</h2>
+                <a href="{% url 'admin:store_order_changelist' %}" class="text-xs text-primary-600 hover:underline">عرض الكل</a>
+            </div>
+            <div class="p-4">
+                {% if recent_orders %}
+                <ul class="space-y-2">
+                    {% for order in recent_orders %}
+                    <li class="flex items-center justify-between py-2 border-b border-gray-100 dark:border-gray-700 last:border-0">
+                        <div>
+                            <a href="{% url 'admin:store_order_change' order.id %}" class="text-sm font-medium text-primary-600 hover:underline">طلب #{{ order.id }}</a>
+                            <div class="text-xs text-gray-500">{{ order.product.title|truncatechars:30 }}</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-sm font-bold text-green-600">${{ order.total }}</div>
+                            <div class="text-xs text-gray-400">{{ order.get_status_display }}</div>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="text-gray-400 text-center py-4 text-sm">لا يوجد طلبات بعد</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+            <div class="px-5 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+                <h2 class="text-base font-bold text-gray-900 dark:text-white">⚠️ مخزون منخفض</h2>
+                <a href="{% url 'admin:store_product_changelist' %}?stock__lt=5" class="text-xs text-primary-600 hover:underline">عرض الكل</a>
+            </div>
+            <div class="p-4">
+                {% if low_stock_products %}
+                <ul class="space-y-2">
+                    {% for p in low_stock_products %}
+                    <li class="flex items-center justify-between py-2 border-b border-gray-100 dark:border-gray-700 last:border-0">
+                        <a href="{% url 'admin:store_product_change' p.id %}" class="text-sm font-medium text-primary-600 hover:underline">{{ p.title|truncatechars:35 }}</a>
+                        <span class="px-2 py-1 text-xs font-bold rounded-full {% if p.stock == 0 %}bg-red-100 text-red-700{% else %}bg-yellow-100 text-yellow-700{% endif %}">{{ p.stock }} متبقي</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="text-gray-400 text-center py-4 text-sm">كل المنتجات مخزونها جيد ✓</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+            <div class="px-5 py-4 border-b border-gray-200 dark:border-gray-700">
+                <h2 class="text-base font-bold text-gray-900 dark:text-white">🆕 آخر المنتجات المضافة</h2>
+            </div>
+            <div class="p-4">
+                {% if recent_products %}
+                <ul class="space-y-2">
+                    {% for p in recent_products %}
+                    <li class="flex items-center gap-3 py-2 border-b border-gray-100 dark:border-gray-700 last:border-0">
+                        {% if p.display_image %}
+                        <img src="{{ p.display_image }}" class="w-10 h-10 rounded-lg object-cover" />
+                        {% else %}
+                        <div class="w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-400">📷</div>
+                        {% endif %}
+                        <div class="flex-1">
+                            <a href="{% url 'admin:store_product_change' p.id %}" class="text-sm font-medium text-primary-600 hover:underline">{{ p.title|truncatechars:30 }}</a>
+                            <div class="text-xs text-gray-500">${{ p.price }}</div>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="text-gray-400 text-center py-4 text-sm">لا يوجد منتجات</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+            <div class="px-5 py-4 border-b border-gray-200 dark:border-gray-700">
+                <h2 class="text-base font-bold text-gray-900 dark:text-white">📊 نظرة سريعة</h2>
+            </div>
+            <div class="p-4 space-y-3">
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600 dark:text-gray-400">متوسط سعر المنتج</span>
+                    <span class="text-sm font-bold text-gray-900 dark:text-white">${{ avg_price|floatformat:2 }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600 dark:text-gray-400">إجمالي قيمة المخزون</span>
+                    <span class="text-sm font-bold text-green-600">${{ total_stock_value|floatformat:2 }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600 dark:text-gray-400">منتجات نشطة</span>
+                    <span class="text-sm font-bold text-gray-900 dark:text-white">{{ active_products }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600 dark:text-gray-400">منتجات معطّلة</span>
+                    <span class="text-sm font-bold text-gray-900 dark:text-white">{{ inactive_products }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

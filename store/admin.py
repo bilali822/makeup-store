@@ -1,17 +1,21 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.html import format_html
 from django.conf import settings
-import base64
-import requests
+from django.db.models import Sum, Count, Avg, F
+from django.utils import timezone
+from datetime import timedelta
+from unfold.admin import ModelAdmin, TabularInline, StackedInline
+from unfold.contrib.filters.admin import (
+    RangeDateFilter, ChoicesDropdownFilter, RelatedDropdownFilter, RangeNumericFilter,
+)
+from unfold.decorators import display, action
 from .models import User, Category, Product, Order
+import base64, csv, requests
+from django.http import HttpResponse
 
 
-# ═══════════════════════════════════════════
-# IMGBB UPLOAD HELPER
-# ═══════════════════════════════════════════
 def upload_to_imgbb(image_file):
-    """رفع الصورة لـ ImgBB وإرجاع الرابط"""
     api_key = getattr(settings, 'IMGBB_API_KEY', None)
     if not api_key:
         return None
@@ -20,11 +24,7 @@ def upload_to_imgbb(image_file):
         encoded = base64.b64encode(image_file.read()).decode('utf-8')
         response = requests.post(
             'https://api.imgbb.com/1/upload',
-            data={
-                'key': api_key,
-                'image': encoded,
-                'name': getattr(image_file, 'name', 'image'),
-            },
+            data={'key': api_key, 'image': encoded, 'name': getattr(image_file, 'name', 'image')},
             timeout=30,
         )
         if response.status_code == 200:
@@ -32,140 +32,187 @@ def upload_to_imgbb(image_file):
             if data.get('success'):
                 return data['data']['url']
     except Exception as e:
-        print(f"ImgBB upload failed: {e}")
+        print(f"ImgBB failed: {e}")
     return None
+
+
+# ═══════════════════════════════════════════
+# CUSTOM FILTERS
+# ═══════════════════════════════════════════
+class LowStockFilter(admin.SimpleListFilter):
+    title = 'حالة المخزون'
+    parameter_name = 'stock_status'
+    def lookups(self, request, model_admin):
+        return [('low', 'منخفض (< 5)'), ('out', 'نفذ (0)'), ('ok', 'جيد (5+)')]
+    def queryset(self, request, queryset):
+        if self.value() == 'low':
+            return queryset.filter(stock__lt=5, stock__gt=0)
+        if self.value() == 'out':
+            return queryset.filter(stock=0)
+        if self.value() == 'ok':
+            return queryset.filter(stock__gte=5)
+
+
+class HasImageFilter(admin.SimpleListFilter):
+    title = 'الصورة'
+    parameter_name = 'has_image'
+    def lookups(self, request, model_admin):
+        return [('yes', 'مع صورة'), ('no', 'بدون صورة')]
+    def queryset(self, request, queryset):
+        if self.value() == 'yes':
+            return queryset.exclude(image_url='').exclude(image_url__isnull=True)
+        if self.value() == 'no':
+            return queryset.filter(image_url__in=['', None])
+
+
+# ═══════════════════════════════════════════
+# DASHBOARD CALLBACK
+# ═══════════════════════════════════════════
+def dashboard_callback(request, context):
+    agg = Product.objects.aggregate(
+        avg=Avg('price'),
+        total_value=Sum(F('price') * F('stock'))
+    )
+    context.update({
+        "kpi": [
+            {"title": "المنتجات", "metric": Product.objects.count(), "footer": f"{Product.objects.filter(is_active=True).count()} نشط", "icon": "📦"},
+            {"title": "الطلبات", "metric": Order.objects.count(), "footer": f"{Order.objects.filter(status='pending').count()} قيد الانتظار", "icon": "🛍️"},
+            {"title": "المستخدمون", "metric": User.objects.count(), "footer": "إجمالي", "icon": "👥"},
+            {"title": "مخزون منخفض", "metric": Product.objects.filter(stock__lt=5).count(), "footer": f"{Product.objects.filter(stock=0).count()} نفذ", "icon": "⚠️"},
+        ],
+        "recent_orders": Order.objects.select_related('product', 'buyer').order_by('-created_at')[:5],
+        "recent_products": Product.objects.select_related('category').order_by('-created_at')[:5],
+        "low_stock_products": Product.objects.filter(stock__lt=5).order_by('stock')[:5],
+        "avg_price": agg['avg'] or 0,
+        "total_stock_value": agg['total_value'] or 0,
+        "active_products": Product.objects.filter(is_active=True).count(),
+        "inactive_products": Product.objects.filter(is_active=False).count(),
+    })
+    return context
+
+
+# ═══════════════════════════════════════════
+# EXPORT CSV ACTION
+# ═══════════════════════════════════════════
+@action(description='📥 تصدير CSV')
+def export_as_csv(modeladmin, request, queryset):
+    meta = modeladmin.model._meta
+    field_names = [f.name for f in meta.fields]
+    response = HttpResponse(content_type='text/csv; charset=utf-8-sig')
+    response['Content-Disposition'] = f'attachment; filename={meta.verbose_name_plural}.csv'
+    writer = csv.writer(response)
+    writer.writerow(field_names)
+    for obj in queryset:
+        writer.writerow([getattr(obj, f) for f in field_names])
+    return response
+
+
+# ═══════════════════════════════════════════
+# INLINES
+# ═══════════════════════════════════════════
+class OrderInline(TabularInline):
+    model = Order
+    fk_name = 'product'
+    extra = 0
+    fields = ['buyer', 'quantity', 'status', 'created_at']
+    readonly_fields = ['created_at']
+    show_change_link = True
+
+
+class ProductInline(TabularInline):
+    model = Product
+    extra = 0
+    fields = ['title', 'price', 'stock', 'is_active']
+    show_change_link = True
 
 
 # ═══════════════════════════════════════════
 # USER ADMIN
 # ═══════════════════════════════════════════
 @admin.register(User)
-class CustomUserAdmin(UserAdmin):
-    fieldsets = UserAdmin.fieldsets + (
+class CustomUserAdmin(BaseUserAdmin, ModelAdmin):
+    fieldsets = BaseUserAdmin.fieldsets + (
         ('معلومات إضافية', {'fields': ('is_seller', 'phone', 'address')}),
     )
-    list_display = ['username', 'email', 'is_seller_badge', 'is_staff', 'date_joined']
-    list_filter = ['is_seller', 'is_staff', 'is_active']
+    list_display = ['username', 'email', 'is_seller_badge', 'is_staff', 'product_count', 'date_joined']
+    list_filter = ['is_seller', 'is_staff', 'is_active', ('date_joined', RangeDateFilter)]
     search_fields = ['username', 'email', 'phone']
 
-    @admin.display(description='بائع')
+    @display(description='بائع', label={'بائع': 'success', 'مشتري': 'info'})
     def is_seller_badge(self, obj):
-        if obj.is_seller:
-            return format_html(
-                '<span style="background:#10b981;color:white;padding:3px 10px;'
-                'border-radius:12px;font-size:11px;">✓ بائع</span>'
-            )
-        return format_html(
-            '<span style="background:#e5e7eb;color:#6b7280;padding:3px 10px;'
-            'border-radius:12px;font-size:11px;">مشتري</span>'
-        )
+        return 'بائع' if obj.is_seller else 'مشتري'
+
+    @display(description='المنتجات')
+    def product_count(self, obj):
+        return obj.products.count()
 
 
 # ═══════════════════════════════════════════
 # CATEGORY ADMIN
 # ═══════════════════════════════════════════
 @admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin):
+class CategoryAdmin(ModelAdmin):
     prepopulated_fields = {'slug': ('name',)}
-    list_display = ['icon_preview', 'name', 'slug', 'product_count']
+    list_display = ['name', 'slug', 'product_count_badge']
     search_fields = ['name']
+    inlines = [ProductInline]
 
-    @admin.display(description='الأيقونة')
-    def icon_preview(self, obj):
-        return format_html(
-            '<i class="fas {}" style="font-size:20px;color:#ec4899;"></i>',
-            obj.icon
-        )
-
-    @admin.display(description='عدد المنتجات')
-    def product_count(self, obj):
-        count = obj.product_set.count()
-        return format_html(
-            '<span style="background:#fce7f3;color:#be185d;padding:3px 10px;'
-            'border-radius:12px;font-weight:600;">{}</span>',
-            count
-        )
+    @display(description='عدد المنتجات', label=True)
+    def product_count_badge(self, obj):
+        return obj.product_set.count()
 
 
 # ═══════════════════════════════════════════
 # PRODUCT ADMIN
 # ═══════════════════════════════════════════
 @admin.register(Product)
-class ProductAdmin(admin.ModelAdmin):
-    list_display = [
-        'image_preview', 'title', 'category_badge', 'owner',
-        'price_display', 'stock_display', 'is_active', 'created_at'
+class ProductAdmin(ModelAdmin):
+    list_display = ['image_preview', 'title', 'category_badge', 'owner', 'price_display', 'stock_badge', 'is_active', 'created_at']
+    list_filter = [
+        'category', 'is_active', 'owner',
+        LowStockFilter, HasImageFilter,
+        ('price', RangeNumericFilter),
+        ('created_at', RangeDateFilter),
+        ('category', RelatedDropdownFilter),
     ]
-    list_filter = ['category', 'is_active', 'owner', 'created_at']
-    search_fields = ['title', 'description']
+    search_fields = ['title', 'description', 'owner__username']
     list_editable = ['is_active']
     list_per_page = 25
     date_hierarchy = 'created_at'
     ordering = ['-created_at']
+    list_select_related = ['category', 'owner']
+    actions = ['activate_products', 'deactivate_products', export_as_csv]
+    inlines = [OrderInline]
 
     fieldsets = (
-        ('معلومات أساسية', {
-            'fields': ('title', 'description', 'category', 'owner')
-        }),
-        ('التسعير والمخزون', {
-            'fields': ('price', 'stock', 'is_active')
-        }),
+        ('معلومات أساسية', {'fields': ('title', 'description', 'category', 'owner')}),
+        ('التسعير والمخزون', {'fields': ('price', 'stock', 'is_active')}),
         ('الصورة', {
             'fields': ('image', 'image_url'),
-            'description': '📸 عند رفع صورة جديدة، سيتم رفعها تلقائياً إلى ImgBB وستظل محفوظة بشكل دائم.'
+            'description': '📸 عند رفع صورة جديدة، سيتم رفعها تلقائياً إلى ImgBB.'
         }),
     )
 
-    actions = ['activate_products', 'deactivate_products']
-
-    @admin.display(description='الصورة')
+    @display(description='الصورة')
     def image_preview(self, obj):
         url = obj.display_image
         if url:
-            return format_html(
-                '<img src="{}" style="width:50px;height:50px;'
-                'object-fit:cover;border-radius:8px;border:1px solid #e5e7eb;" />',
-                url
-            )
-        return format_html(
-            '<div style="width:50px;height:50px;background:#f3f4f6;'
-            'border-radius:8px;text-align:center;line-height:50px;'
-            'color:#9ca3af;font-size:20px;">📷</div>'
-        )
+            return format_html('<img src="{}" style="width:45px;height:45px;object-fit:cover;border-radius:8px;border:1px solid #e5e7eb;" />', url)
+        return format_html('<div style="width:45px;height:45px;background:#f3f4f6;border-radius:8px;text-align:center;line-height:45px;color:#9ca3af;font-size:18px;">📷</div>')
 
-    @admin.display(description='الفئة')
+    @display(description='الفئة')
     def category_badge(self, obj):
-        if obj.category:
-            return format_html(
-                '<span style="background:#fce7f3;color:#be185d;padding:4px 10px;'
-                'border-radius:12px;font-size:12px;font-weight:600;">{}</span>',
-                obj.category.name
-            )
-        return '—'
+        return obj.category.name if obj.category else '—'
 
-    @admin.display(description='السعر')
+    @display(description='السعر', ordering='price')
     def price_display(self, obj):
-        return format_html(
-            '<span style="color:#059669;font-weight:700;">${}</span>',
-            obj.price
-        )
+        return f"${obj.price}"
 
-    @admin.display(description='المخزون')
-    def stock_display(self, obj):
-        if obj.stock == 0:
-            color, bg = '#ef4444', '#fee2e2'
-        elif obj.stock < 5:
-            color, bg = '#f59e0b', '#fef3c7'
-        else:
-            color, bg = '#10b981', '#d1fae5'
-        return format_html(
-            '<span style="background:{};color:{};padding:4px 10px;'
-            'border-radius:12px;font-weight:600;font-size:12px;">{}</span>',
-            bg, color, obj.stock
-        )
+    @display(description='المخزون', ordering='stock', label={'0': 'danger', '1': 'warning', '5': 'success'})
+    def stock_badge(self, obj):
+        return str(obj.stock)
 
     def save_model(self, request, obj, form, change):
-        """عند حفظ المنتج — رفع الصورة الجديدة لـ ImgBB"""
         if 'image' in form.changed_data and obj.image:
             try:
                 obj.image.seek(0)
@@ -173,76 +220,64 @@ class ProductAdmin(admin.ModelAdmin):
                 if url:
                     obj.image_url = url
                     obj.image = None
-                    self.message_user(
-                        request,
-                        f'✅ تم رفع الصورة إلى ImgBB بنجاح'
-                    )
+                    self.message_user(request, '✅ تم رفع الصورة إلى ImgBB')
                 else:
-                    self.message_user(
-                        request,
-                        '⚠️ تعذّر رفع الصورة — تحقق من IMGBB_API_KEY',
-                        level='WARNING'
-                    )
+                    self.message_user(request, '⚠️ فشل رفع الصورة', level='WARNING')
             except Exception as e:
-                self.message_user(
-                    request,
-                    f'⚠️ خطأ في رفع الصورة: {e}',
-                    level='ERROR'
-                )
+                self.message_user(request, f'⚠️ خطأ: {e}', level='ERROR')
         super().save_model(request, obj, form, change)
 
-    @admin.action(description='✓ تفعيل المنتجات المحددة')
+    @action(description='✓ تفعيل المحددة')
     def activate_products(self, request, queryset):
-        updated = queryset.update(is_active=True)
-        self.message_user(request, f'✅ تم تفعيل {updated} منتج')
+        n = queryset.update(is_active=True)
+        self.message_user(request, f'✅ تم تفعيل {n} منتج')
 
-    @admin.action(description='✗ تعطيل المنتجات المحددة')
+    @action(description='✗ تعطيل المحددة')
     def deactivate_products(self, request, queryset):
-        updated = queryset.update(is_active=False)
-        self.message_user(request, f'✅ تم تعطيل {updated} منتج')
+        n = queryset.update(is_active=False)
+        self.message_user(request, f'✅ تم تعطيل {n} منتج')
 
 
 # ═══════════════════════════════════════════
 # ORDER ADMIN
 # ═══════════════════════════════════════════
 @admin.register(Order)
-class OrderAdmin(admin.ModelAdmin):
-    list_display = [
-        'id', 'buyer', 'product', 'quantity',
-        'total_display', 'status_badge', 'created_at'
-    ]
-    list_filter = ['status', 'created_at']
-    search_fields = ['buyer__username', 'product__title']
-    # list_editable = ['status']  # disabled: status_badge in use
+class OrderAdmin(ModelAdmin):
+    list_display = ['id', 'buyer', 'product', 'quantity', 'total_display', 'status_badge', 'created_at']
+    list_filter = [('status', ChoicesDropdownFilter), ('created_at', RangeDateFilter), 'buyer']
+    search_fields = ['buyer__username', 'product__title', 'id']
     date_hierarchy = 'created_at'
+    list_select_related = ['buyer', 'product']
+    actions = ['mark_confirmed', 'mark_shipped', 'mark_delivered', export_as_csv]
+    readonly_fields = ['created_at']
 
-    @admin.display(description='الإجمالي')
+    @display(description='الإجمالي')
     def total_display(self, obj):
-        return format_html(
-            '<span style="color:#059669;font-weight:700;">${}</span>',
-            obj.total
-        )
+        return f"${obj.total}"
 
-    @admin.display(description='الحالة')
+    @display(description='الحالة', ordering='status', label={
+        'pending': 'warning', 'confirmed': 'info', 'shipped': 'primary',
+        'delivered': 'success', 'cancelled': 'danger',
+    })
     def status_badge(self, obj):
-        colors = {
-            'pending': ('#f59e0b', '#fef3c7', '⏳ قيد الانتظار'),
-            'confirmed': ('#3b82f6', '#dbeafe', '✓ مؤكد'),
-            'shipped': ('#8b5cf6', '#ede9fe', '🚚 تم الشحن'),
-            'delivered': ('#10b981', '#d1fae5', '✅ تم التسليم'),
-            'cancelled': ('#ef4444', '#fee2e2', '✗ ملغى'),
-        }
-        color, bg, label = colors.get(obj.status, ('#6b7280', '#f3f4f6', obj.status))
-        return format_html(
-            '<span style="background:{};color:{};padding:4px 12px;'
-            'border-radius:12px;font-weight:600;font-size:12px;">{}</span>',
-            bg, color, label
-        )
+        return obj.get_status_display()
+
+    @action(description='✓ تأكيد الطلبات')
+    def mark_confirmed(self, request, queryset):
+        n = queryset.update(status='confirmed')
+        self.message_user(request, f'✅ تم تأكيد {n} طلب')
+
+    @action(description='🚚 تحديد كمشحون')
+    def mark_shipped(self, request, queryset):
+        n = queryset.update(status='shipped')
+        self.message_user(request, f'✅ تم شحن {n} طلب')
+
+    @action(description='✅ تحديد كمُسلَّم')
+    def mark_delivered(self, request, queryset):
+        n = queryset.update(status='delivered')
+        self.message_user(request, f'✅ تم تسليم {n} طلب')
 
 
-# ═══════════════════════════════════════════
-# ADMIN SITE CUSTOMIZATION
-# ═══════════════════════════════════════════
 admin.site.site_header = "SB by Sabah — لوحة التحكم"
 admin.site.site_title = "SB by Sabah"
-admin.site.index_title = "مرحباً بك في لوحة تحكم المتجر ✨"
+admin.site.index_title = "لوحة التحكم ✨"
