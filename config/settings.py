@@ -282,12 +282,34 @@ UNFOLD = {
                 ],
             },
             {
-                "title": "المستخدمون",
+                "title": "المبيعات",
+                "separator": True,
+                "items": [
+                    {
+                        "title": "الفواتير",
+                        "icon": "receipt_long",
+                        "link": reverse_lazy("admin:store_invoice_changelist"),
+                    },
+                ],
+            },
+            {
+                "title": "العملاء",
+                "separator": True,
+                "items": [
+                    {
+                        "title": "العملاء",
+                        "icon": "person",
+                        "link": reverse_lazy("admin:store_customer_changelist"),
+                    },
+                ],
+            },
+            {
+                "title": "الإدارة",
                 "separator": True,
                 "items": [
                     {
                         "title": "المستخدمون",
-                        "icon": "people",
+                        "icon": "admin_panel_settings",
                         "link": reverse_lazy("admin:store_user_changelist"),
                     },
                     {

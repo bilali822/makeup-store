@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
+from django.utils import timezone
 
 
 class User(AbstractUser):
@@ -102,3 +103,65 @@ class Order(models.Model):
     @property
     def total(self):
         return self.product.price * self.quantity
+
+
+
+# ═══════════════════════════════════════════
+# CUSTOMER (Proxy لعرض العملاء فقط)
+# ═══════════════════════════════════════════
+class Customer(User):
+    """واجهة لعرض العملاء (المشترين) فقط"""
+    class Meta:
+        proxy = True
+        verbose_name = "عميل"
+        verbose_name_plural = "العملاء"
+
+
+# ═══════════════════════════════════════════
+# INVOICE
+# ═══════════════════════════════════════════
+class Invoice(models.Model):
+    """الفاتورة — تصدر لكل طلب"""
+    STATUS_CHOICES = [
+        ('draft', 'مسودة'),
+        ('sent', 'مُرسلة'),
+        ('paid', 'مدفوعة'),
+        ('overdue', 'متأخرة'),
+        ('cancelled', 'ملغاة'),
+    ]
+
+    invoice_number = models.CharField(max_length=50, unique=True, verbose_name="رقم الفاتورة", blank=True)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='invoices', verbose_name="الطلب")
+    customer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='invoices', verbose_name="العميل")
+    issue_date = models.DateField(default=timezone.now, verbose_name="تاريخ الإصدار")
+    due_date = models.DateField(null=True, blank=True, verbose_name="تاريخ الاستحقاق")
+    subtotal = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name="المجموع الفرعي")
+    tax = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name="الضريبة")
+    discount = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name="الخصم")
+    total = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name="الإجمالي")
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft', verbose_name="الحالة")
+    notes = models.TextField(blank=True, verbose_name="ملاحظات")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "فاتورة"
+        verbose_name_plural = "الفواتير"
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"فاتورة {self.invoice_number}"
+
+    def save(self, *args, **kwargs):
+        # توليد رقم الفاتورة تلقائياً
+        if not self.invoice_number:
+            last = Invoice.objects.order_by('-id').first()
+            next_id = (last.id + 1) if last else 1
+            self.invoice_number = f"INV-{timezone.now().strftime('%Y%m')}-{next_id:04d}"
+
+        # حساب المبالغ تلقائياً من الطلب
+        if self.order:
+            if not self.subtotal:
+                self.subtotal = self.order.total
+            self.total = self.subtotal + (self.tax or 0) - (self.discount or 0)
+
+        super().save(*args, **kwargs)

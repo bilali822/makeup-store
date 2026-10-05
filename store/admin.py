@@ -10,8 +10,9 @@ from unfold.contrib.filters.admin import (
     RangeDateFilter, ChoicesDropdownFilter, RelatedDropdownFilter, RangeNumericFilter,
 )
 from unfold.decorators import display, action
-from .models import User, Category, Product, Order
+from .models import User, Category, Product, Order, Invoice, Customer
 import base64, csv, requests
+from django.urls import reverse
 from django.http import HttpResponse
 
 
@@ -276,6 +277,120 @@ class OrderAdmin(ModelAdmin):
     def mark_delivered(self, request, queryset):
         n = queryset.update(status='delivered')
         self.message_user(request, f'✅ تم تسليم {n} طلب')
+
+
+
+
+# ═══════════════════════════════════════════
+# CUSTOMER ADMIN
+# ═══════════════════════════════════════════
+@admin.register(Customer)
+class CustomerAdmin(ModelAdmin):
+    list_display = ['username', 'email', 'phone', 'total_orders', 'total_spent', 'last_login', 'is_active']
+    list_filter = [('date_joined', RangeDateFilter), 'is_active']
+    search_fields = ['username', 'email', 'phone', 'address', 'first_name', 'last_name']
+    ordering = ['-date_joined']
+    list_select_related = False
+    readonly_fields = ['date_joined', 'last_login']
+
+    fieldsets = (
+        ('معلومات أساسية', {'fields': ('username', 'email', 'first_name', 'last_name', 'phone')}),
+        ('العنوان', {'fields': ('address',)}),
+        ('الحالة', {'fields': ('is_active', 'date_joined', 'last_login')}),
+    )
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).filter(is_seller=False)
+
+    def has_add_permission(self, request):
+        return False
+
+    @display(description='عدد الطلبات')
+    def total_orders(self, obj):
+        return Order.objects.filter(buyer=obj).count()
+
+    @display(description='إجمالي الشراء')
+    def total_spent(self, obj):
+        total = Order.objects.filter(buyer=obj).aggregate(
+            t=Sum(F('quantity') * F('product__price'))
+        )['t'] or 0
+        return f"${total:.2f}"
+
+
+# ═══════════════════════════════════════════
+# INVOICE ADMIN
+# ═══════════════════════════════════════════
+@admin.register(Invoice)
+class InvoiceAdmin(ModelAdmin):
+    list_display = ['invoice_number', 'customer_link', 'order_link', 'issue_date', 'due_date', 'total_display', 'status_badge']
+    list_filter = [('status', ChoicesDropdownFilter), ('issue_date', RangeDateFilter), ('due_date', RangeDateFilter)]
+    search_fields = ['invoice_number', 'customer__username', 'order__id']
+    date_hierarchy = 'issue_date'
+    readonly_fields = ['invoice_number', 'created_at', 'total']
+    list_select_related = ['customer', 'order']
+    list_per_page = 25
+    actions = ['mark_paid', 'mark_sent', 'mark_overdue', 'mark_cancelled', export_as_csv]
+
+    fieldsets = (
+        ('معلومات الفاتورة', {'fields': ('invoice_number', 'status', 'order', 'customer')}),
+        ('التواريخ', {'fields': ('issue_date', 'due_date')}),
+        ('المبالغ', {'fields': ('subtotal', 'tax', 'discount', 'total')}),
+        ('إضافي', {'fields': ('notes', 'created_at')}),
+    )
+
+    @display(description='العميل')
+    def customer_link(self, obj):
+        return format_html(
+            '<a href="{}" class="text-primary-600 hover:underline">{}</a>',
+            reverse('admin:store_customer_change', args=[obj.customer.id]),
+            obj.customer.username
+        )
+
+    @display(description='الطلب')
+    def order_link(self, obj):
+        return format_html(
+            '<a href="{}" class="text-primary-600 hover:underline">طلب #{}</a>',
+            reverse('admin:store_order_change', args=[obj.order.id]),
+            obj.order.id
+        )
+
+    @display(description='الإجمالي')
+    def total_display(self, obj):
+        return f"${obj.total}"
+
+    @display(
+        description='الحالة',
+        ordering='status',
+        label={
+            'draft': 'info',
+            'sent': 'warning',
+            'paid': 'success',
+            'overdue': 'danger',
+            'cancelled': 'secondary',
+        },
+    )
+    def status_badge(self, obj):
+        return obj.get_status_display()
+
+    @action(description='✓ تحديد كمدفوعة')
+    def mark_paid(self, request, queryset):
+        n = queryset.update(status='paid')
+        self.message_user(request, f'✅ تم تحديد {n} فاتورة كمدفوعة')
+
+    @action(description='📤 تحديد كمُرسلة')
+    def mark_sent(self, request, queryset):
+        n = queryset.update(status='sent')
+        self.message_user(request, f'✅ تم تحديد {n} فاتورة كمُرسلة')
+
+    @action(description='⚠️ تحديد كمتأخرة')
+    def mark_overdue(self, request, queryset):
+        n = queryset.update(status='overdue')
+        self.message_user(request, f'✅ تم تحديد {n} فاتورة كمتأخرة')
+
+    @action(description='✗ إلغاء')
+    def mark_cancelled(self, request, queryset):
+        n = queryset.update(status='cancelled')
+        self.message_user(request, f'✅ تم إلغاء {n} فاتورة')
 
 
 admin.site.site_header = "SB by Sabah — لوحة التحكم"
