@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.html import format_html
 from django.conf import settings
+from django.db import models
 from django.db.models import Sum, Avg, F
 from django.urls import reverse
 from unfold.admin import ModelAdmin, TabularInline
@@ -119,24 +120,36 @@ class ProductInline(TabularInline):
 
 @admin.register(User)
 class CustomUserAdmin(BaseUserAdmin, ModelAdmin):
+    """مستخدمو لوحة التحكم فقط (staff + superuser)"""
     fieldsets = BaseUserAdmin.fieldsets + (
-        ('معلومات إضافية', {'fields': ('is_seller', 'phone', 'address')}),
+        ('معلومات إضافية', {'fields': ('phone',)}),
     )
-    list_display = ['username', 'email', 'is_seller_badge', 'is_staff', 'product_count', 'date_joined']
-    list_filter = ['is_seller', 'is_staff', 'is_active', ('date_joined', RangeDateFilter)]
-    search_fields = ['username', 'email', 'phone']
+    list_display = ['username', 'email', 'full_name', 'is_staff_badge', 'is_superuser_badge', 'last_login', 'is_active']
+    list_filter = ['is_staff', 'is_superuser', 'is_active', ('date_joined', RangeDateFilter)]
+    search_fields = ['username', 'email', 'first_name', 'last_name', 'phone']
 
-    @display(description='بائع', label={'بائع': 'success', 'مشتري': 'info'})
-    def is_seller_badge(self, obj):
-        return 'بائع' if obj.is_seller else 'مشتري'
+    def get_queryset(self, request):
+        """فقط staff + superuser"""
+        return super().get_queryset(request).filter(
+            models.Q(is_staff=True) | models.Q(is_superuser=True)
+        )
 
-    @display(description='المنتجات')
-    def product_count(self, obj):
-        return obj.products.count()
+    @display(description='الاسم')
+    def full_name(self, obj):
+        return f"{obj.first_name} {obj.last_name}".strip() or '—'
+
+    @display(description='صلاحية', label={'مدير': 'success', 'موظف': 'info'})
+    def is_staff_badge(self, obj):
+        return 'مدير' if obj.is_staff else 'عادي'
+
+    @display(description='Superuser', label={'نعم': 'success', 'لا': 'secondary'})
+    def is_superuser_badge(self, obj):
+        return 'نعم' if obj.is_superuser else 'لا'
 
 
 @admin.register(Customer)
 class CustomerAdmin(ModelAdmin):
+    """العملاء (المشترون) — بدون staff/superuser"""
     list_display = ['username', 'full_name', 'phone', 'invoice_count', 'total_spent', 'last_login', 'is_active']
     list_filter = [('date_joined', RangeDateFilter), 'is_active']
     search_fields = ['username', 'email', 'phone', 'address', 'first_name', 'last_name']
@@ -144,16 +157,31 @@ class CustomerAdmin(ModelAdmin):
     readonly_fields = ['date_joined', 'last_login']
 
     fieldsets = (
-        ('معلومات أساسية', {'fields': ('username', 'email', 'first_name', 'last_name', 'phone')}),
+        ('معلومات الدخول', {
+            'fields': ('username', 'password'),
+            'description': 'كلمة المرور اختيارية — إذا تركتها فارغة، يمكن للعميل استخدم login بدون password'
+        }),
+        ('معلومات شخصية', {'fields': ('first_name', 'last_name', 'email', 'phone')}),
         ('العنوان', {'fields': ('address',)}),
         ('الحالة', {'fields': ('is_active', 'date_joined', 'last_login')}),
     )
 
     def get_queryset(self, request):
-        return super().get_queryset(request).filter(is_seller=False)
+        """العملاء فقط — بدون staff/superuser"""
+        return super().get_queryset(request).filter(
+            is_staff=False,
+            is_superuser=False
+        )
 
-    def has_add_permission(self, request):
-        return False
+    def save_model(self, request, obj, form, change):
+        """عند الحفظ — تأكد إنه عميل (مش staff)"""
+        obj.is_staff = False
+        obj.is_superuser = False
+        obj.is_seller = False
+        if not change and not obj.password:
+            # إذا عميل جديد بدون password — نضع password غير قابل للاستخدام
+            obj.set_unusable_password()
+        super().save_model(request, obj, form, change)
 
     @display(description='الاسم')
     def full_name(self, obj):
